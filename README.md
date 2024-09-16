@@ -1,6 +1,6 @@
 # Donations To MTTQ in support of Yagi Typhoon Dashboard
 
-# [Access the project here](https://donate.streamlit.app/)
+## [Access the project here](https://donate.streamlit.app/)
 
 Streamlit app to quickly query the donations
 
