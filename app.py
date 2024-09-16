@@ -1,7 +1,15 @@
 import streamlit as st
 import pandas as pd
+import os
+from datetime import datetime
 
 language = st.radio("Chọn ngôn ngữ / Select Language:", ("Tiếng Việt", "English"))
+
+try:
+    last_modified_time = os.path.getmtime("mttq.csv")
+    last_updated = datetime.fromtimestamp(last_modified_time).strftime('%Y-%m-%d %H:%M:%S')
+except FileNotFoundError:
+    last_updated = None
 
 if language == "English":
     st.markdown("""
@@ -17,6 +25,7 @@ if language == "English":
     file_not_found_message = "CSV file not found. Please ensure 'mttq.csv' exists in the directory."
     no_results_message = "No transactions found."
     results_message = "Found {} transactions:"
+    last_updated_text = "Last Updated: "
 else:
     st.markdown("""
         Dự án thống kê những số tiền ủng hộ [MTTQ Việt Nam](https://www.facebook.com/mttqvietnam) bởi [Binh Le](https://binhl3.github.io/)
@@ -31,6 +40,10 @@ else:
     file_not_found_message = "Không tìm thấy tệp CSV. Vui lòng đảm bảo 'mttq.csv' tồn tại trong thư mục."
     no_results_message = "Không tìm thấy giao dịch nào."
     results_message = "Tìm thấy {} giao dịch:"
+    last_updated_text = "Cập nhật lần cuối: "
+
+if last_updated:
+    st.markdown(f"**{last_updated_text} {last_updated}**")
 
 def format_vnd(amount):
     try:
