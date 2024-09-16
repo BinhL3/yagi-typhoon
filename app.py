@@ -1,7 +1,10 @@
 import streamlit as st
 import pandas as pd
 
-st.title("Donation Amount Query Dashboard")
+st.title("MTTQ Donations Dashboard")
+
+def format_vnd(amount):
+    return f"{float(amount):,}".replace(",", ".") + " VNĐ"
 
 try:
     df = pd.read_csv("mttq.csv")
@@ -11,20 +14,17 @@ except FileNotFoundError:
     df = None
 
 if df is not None:
-    search_query = st.text_input("Enter the content/transaction detail to search for donations:")
-
-    amount_query = st.number_input("Enter donation amount to search for (optional):", min_value=0.0, value=0.0, step=1.0)
-
-    if search_query or amount_query > 0:
-        if search_query:
-            filtered_df = df[df['transaction_detail'].str.contains(search_query, case=False, na=False)]
-        else:
-            filtered_df = df
+    search_query = st.text_input("Enter search query for transaction code, amount, or transaction detail:")
+    
+    if search_query:
+        filtered_df = df[
+            df['transaction_code'].astype(str).str.contains(search_query, case=False, na=False) |
+            df['amount'].astype(str).str.contains(search_query, case=False, na=False) |
+            df['transaction_detail'].str.contains(search_query, case=False, na=False)
+        ]
         
-        if amount_query > 0:
-            filtered_df = filtered_df[filtered_df['amount'] == amount_query]
-
         if not filtered_df.empty:
+            filtered_df['amount'] = filtered_df['amount'].apply(format_vnd)
             st.write(f"Found {len(filtered_df)} donation(s) matching your criteria:")
             st.dataframe(filtered_df)
         else:
